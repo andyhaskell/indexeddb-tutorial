@@ -3,16 +3,28 @@
 //
 
 let db;
-let dbReq = indexedDB.open('myDatabase', 1);
+let dbReq = indexedDB.open('myDatabase', 2);
 
 // Fires when the version of the database goes up, or the database is created
 // for the first time
 dbReq.onupgradeneeded = function(event) {
   db = event.target.result;
 
-  // Create an object store named notes. Object stores in databases are where
-  // data are stored.
-  let notes = db.createObjectStore('notes', {autoIncrement: true});
+  // Create an object store named notes, or retrieve it if it already exists.
+  // Object stores in databases are where data are stored.
+  let notes;
+  if (!db.objectStoreNames.contains('notes')) {
+    let notes = db.createObjectStore('notes', {autoIncrement: true});
+  } else {
+    notes = dbReq.transaction.objectStore('notes');
+  }
+
+  // If there isn't already a timestamp index, make one so we can query notes
+  // by their timestamps
+  if (!notes.indexNames.contains('timestamp')) {
+    console.log('createIndex')
+    notes.createIndex('timestamp', 'timestamp');
+  }
 }
 
 // Fires once the database is opened (and onupgradeneeded completes, if
