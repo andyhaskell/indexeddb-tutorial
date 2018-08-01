@@ -14,7 +14,7 @@ dbReq.onupgradeneeded = function(event) {
   // Object stores in databases are where data are stored.
   let notes;
   if (!db.objectStoreNames.contains('notes')) {
-    let notes = db.createObjectStore('notes', {autoIncrement: true});
+    notes = db.createObjectStore('notes', {autoIncrement: true});
   } else {
     notes = dbReq.transaction.objectStore('notes');
   }
@@ -78,15 +78,22 @@ function addManyNotes(db, messages) {
   tx.oncomplete = function() { console.log('transaction complete') };
 }
 
+let reverseOrder = false;
+
 // getAndDisplayNotes retrieves all notes in the notes object store using an
 // IndexedDB cursor and sends them to displayNotes so they can be displayed
 function getAndDisplayNotes(db) {
   let tx = db.transaction(['notes'], 'readonly');
   let store = tx.objectStore('notes');
 
-  // Create a cursor request to get all items in the store, which we collect
-  // in the allNotes array
-  let req = store.openCursor();
+  // Retrieve the sticky notes index to run our cursor query on; the results
+  // will be ordered by their timestamp
+  let index = store.index('timestamp');
+
+  // Create our openCursor request to get all items in the store, which we
+  // collect in the allNotes array. If we're going in reverse, then specify
+  // the direction as prev, otherwise, we specify it as next
+  let req = index.openCursor(null, reverseOrder ? 'prev' : 'next');
   let allNotes = [];
 
   req.onsuccess = function(event) {
@@ -136,4 +143,11 @@ function displayNotes(notes) {
       new Date(note.timestamp).toString() + '</li>';
   }
   document.getElementById('notes').innerHTML = listHTML;
+}
+
+// flipNoteOrder flips the order of the notes we display from forward to
+// reverse, and vice versa, re-displaying the notes in the updated order.
+function flipNoteOrder(notes) {
+  reverseOrder = !reverseOrder;
+  getAndDisplayNotes(db);
 }
