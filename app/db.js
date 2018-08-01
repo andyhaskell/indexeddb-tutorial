@@ -1,3 +1,7 @@
+//
+// Database management
+//
+
 let db;
 let dbReq = indexedDB.open('myDatabase', 1);
 
@@ -21,4 +25,37 @@ dbReq.onsuccess = function(event) {
 // Fires when we can't open the database
 dbReq.onerror = function(event) {
   alert('error opening database ' + event.target.errorCode);
+}
+
+//
+// IndexedDB functions
+//
+
+// addStickyNote adds a sticky note for the message passed in in the notes
+// object store.
+function addStickyNote(db, message) {
+  // Start a database transaction and get the notes object store
+  let tx = db.transaction(['notes'], 'readwrite');
+  let store = tx.objectStore('notes');
+
+  // Put the sticky note into the object store
+  let note = {text: message, timestamp: Date.now()};
+  store.add(note);
+
+  // Wait for the database transaction to complete
+  tx.oncomplete = function() { console.log('stored note!') }
+  tx.onerror = function(event) {
+    alert('error storing note ' + event.target.errorCode);
+  }
+}
+
+//
+// DOM manipulation
+//
+
+//
+function submitNote() {
+  let message = document.getElementById('newmessage');
+  addStickyNote(db, message.value);
+  message.value = '';
 }
