@@ -49,11 +49,28 @@ function addStickyNote(db, message) {
   }
 }
 
+// addManyNotes adds sticky notes for an array of messages to the notes
+// object store. This is to demonstrate that you can run multiple IndexedDB
+// requests in the same transaction, and it is completely normal to do so.
+function addManyNotes(db, messages) {
+  let tx = db.transaction(['notes'], 'readwrite');
+  let store = tx.objectStore('notes');
+
+  for (let i = 0; i < messages.length; i++) {
+    // All of the requests made from store.add are part of the same
+    // transaction.
+    store.add({text: messages[i], timestamp: Date.now()});
+  }
+
+  tx.oncomplete = function() { console.log('transaction complete') };
+}
+
 //
 // DOM manipulation
 //
 
-//
+// submitNote submits the sticky note in the #newmessage text box to the
+// notes object store
 function submitNote() {
   let message = document.getElementById('newmessage');
   addStickyNote(db, message.value);
