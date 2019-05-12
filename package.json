@@ -1,5 +1,6 @@
 {
   "devDependencies": {
+    "fake-indexeddb": "^2.1.0",
     "jest": "^24.8.0"
   }
 }

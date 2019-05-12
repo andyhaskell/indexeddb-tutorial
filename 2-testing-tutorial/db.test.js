@@ -1,3 +1,9 @@
+// By requiring fake-indexeddb/auto, code in that module automatically runs,
+// loading every global function and variable in IndexedDB, such as the
+// indexedDB global object itself, the IDBCursor constructor, etc. In automated
+// tests, we need to load this because indexedDB is not one of Node's global
+// objects like it is in a browser's `window`.
+require("fake-indexeddb/auto");
 let {setupDB, addStickyNote, getNotes} = require('./db');
 
 test('we can store and retrieve sticky notes', function(done) {
