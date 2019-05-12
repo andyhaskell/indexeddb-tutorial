@@ -133,3 +133,5 @@ function flipNoteOrder(notes) {
   reverseOrder = !reverseOrder;
   getAndDisplayNotes();
 }
+
+module.exports = {setupDB, addStickyNote, getNotes};
