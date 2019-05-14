@@ -7,7 +7,7 @@ require("fake-indexeddb/auto");
 let {setupDB, addStickyNote, getNotes} = require('./db');
 
 test('we can store and retrieve sticky notes', function(done) {
-  setupDB(function() {
+  setupDB('FORWARD_TEST', function() {
     addStickyNote('SLOTHS', function() {
       addStickyNote('RULE!', function() {
         // Now that our sticky notes are both added, we retrieve them from
@@ -16,6 +16,21 @@ test('we can store and retrieve sticky notes', function(done) {
           expect(notes).toHaveLength(2);
           expect(notes[0].text).toBe('SLOTHS');
           expect(notes[1].text).toBe('RULE!');
+          done();
+        });
+      });
+    });
+  });
+});
+
+test('reverse order', function(done) {
+  setupDB('REVERSE_TEST', function() {
+    addStickyNote('REVERSE', function() {
+      addStickyNote('IN', function() {
+        getNotes(reverseOrder=true, function(notes) {
+          expect(notes).toHaveLength(2);
+          expect(notes[0].text).toBe('IN');
+          expect(notes[1].text).toBe('REVERSE');
           done();
         });
       });

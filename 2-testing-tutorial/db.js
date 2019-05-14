@@ -3,8 +3,14 @@
 //
 
 let db;
+let dbNamespace;
 
-function setupDB(callback) {
+function setupDB(namespace, callback) {
+  if (namespace != dbNamespace) {
+    db = null;
+  }
+  dbNamespace = namespace;
+
   // If setupDB has already been run and the database was set up, no need to
   // open the database again; just run our callback and return!
   if (db) {
@@ -12,7 +18,8 @@ function setupDB(callback) {
     return;
   }
 
-  let dbReq = indexedDB.open('myDatabase', 2);
+  let dbName = namespace == '' ? 'myDatabase' : 'myDatabase_' + namespace;
+  let dbReq = indexedDB.open(dbName, 2);
 
   // Fires when the version of the database goes up, or the database is created
   // for the first time
