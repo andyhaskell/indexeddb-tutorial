@@ -6,6 +6,7 @@
     "webpack-cli": "^3.3.2"
   },
   "scripts": {
-    "build-webapp-2": "npx webpack --config 2-testing-tutorial/webpack.config.js"
+    "build-webapp-2": "npx webpack --config 2-testing-tutorial/webpack.config.js",
+    "build-webapp-3": "npx webpack --config 3-promises-tutorial/webpack.config.js"
   }
 }

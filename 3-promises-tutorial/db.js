@@ -5,49 +5,51 @@
 let db;
 let dbNamespace;
 
-function setupDB(namespace, callback) {
-  if (namespace != dbNamespace) {
-    db = null;
-  }
-  dbNamespace = namespace;
-
-  // If setupDB has already been run and the database was set up, no need to
-  // open the database again; just run our callback and return!
-  if (db) {
-    callback();
-    return;
-  }
-
-  let dbName = namespace == '' ? 'myDatabase' : 'myDatabase_' + namespace;
-  let dbReq = indexedDB.open(dbName, 2);
-
-  // Fires when the version of the database goes up, or the database is created
-  // for the first time
-  dbReq.onupgradeneeded = function(event) {
-    db = event.target.result;
-  
-    // Create an object store named notes, or retrieve it if it already exists.
-    // Object stores in databases are where data are stored.
-    let notes;
-    if (!db.objectStoreNames.contains('notes')) {
-      notes = db.createObjectStore('notes', {autoIncrement: true});
-    } else {
-      notes = dbReq.transaction.objectStore('notes');
+function setupDB(namespace) {
+  return new Promise(function(resolve, reject) {
+    if (namespace != dbNamespace) {
+      db = null;
     }
-  }
-  
-  // Fires once the database is opened (and onupgradeneeded completes, if
-  // onupgradeneeded was called)
-  dbReq.onsuccess = function(event) {
-    // Set the db variable to our database so we can use it!
-    db = event.target.result;
-    callback();
-  }
-  
-  // Fires when we can't open the database
-  dbReq.onerror = function(event) {
-    alert('error opening database ' + event.target.errorCode);
-  }
+    dbNamespace = namespace;
+
+    // If setupDB has already been run and the database was set up, no need to
+    // open the database again; just resolve and return!
+    if (db) {
+      resolve();
+      return;
+    }
+
+    let dbName = namespace == '' ? 'myDatabase' : 'myDatabase_' + namespace;
+    let dbReq = indexedDB.open(dbName, 2);
+
+    // Fires when the version of the database goes up, or the database is
+    // created for the first time
+    dbReq.onupgradeneeded = function(event) {
+      db = event.target.result;
+
+      // Create an object store named notes, or retrieve it if it already
+      // exists. Object stores in databases are where data are stored.
+      let notes;
+      if (!db.objectStoreNames.contains('notes')) {
+        notes = db.createObjectStore('notes', {autoIncrement: true});
+      } else {
+        notes = dbReq.transaction.objectStore('notes');
+      }
+    }
+
+    // Fires once the database is opened (and onupgradeneeded completes, if
+    // onupgradeneeded was called)
+    dbReq.onsuccess = function(event) {
+      // Set the db variable to our database so we can use it!
+      db = event.target.result;
+      resolve();
+    }
+
+    // Fires when we can't open the database
+    dbReq.onerror = function(event) {
+      reject(`error opening database ${event.target.errorCode}`);
+    }
+  });
 }
 
 //
