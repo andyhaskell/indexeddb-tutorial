@@ -12,7 +12,9 @@ function submitNote() {
 
 // getAndDisplayNotes is a helper function for retrieving notes and then
 // having them be displayed with displayNotes.
-function getAndDisplayNotes() { getNotes(reverseOrder, displayNotes); }
+function getAndDisplayNotes() {
+  getNotes(reverseOrder).then((notes) => { displayNotes(notes) });
+}
 
 // displayNotes takes in an array of sticky note objects and displays them as
 // <li> elements.

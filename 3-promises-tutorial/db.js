@@ -79,33 +79,38 @@ function addStickyNote(message) {
 }
 
 // getNotes retrieves all notes in the notes object store using an IndexedDB
-// cursor and sends them to the calback passed in
-function getNotes(reverseOrder, callback) {
-  let tx = db.transaction(['notes'], 'readonly');
+// cursor, returning a promise. If retrieving the notes succeeds, then the
+// promise resolves with the array of sticky notes, and if it fails, the
+// promise rejects with the error message.
+function getNotes(reverseOrder) {
+  return new Promise((resolve, reject) => {
+    let tx = db.transaction(['notes'], 'readonly');
 
-  // Retrieve the sticky notes object store to run our cursor query on
-  let store = tx.objectStore('notes');
-  let req = store.openCursor(null, reverseOrder ? 'prev' : 'next');
+    // Retrieve the sticky notes object store to run our cursor query on
+    let store = tx.objectStore('notes');
+    let req = store.openCursor(null, reverseOrder ? 'prev' : 'next');
 
-  let allNotes = [];
-  req.onsuccess = function(event) {
-    let cursor = event.target.result;
+    let allNotes = [];
+    req.onsuccess = function(event) {
+      let cursor = event.target.result;
 
-    if (cursor != null) {
-      // If the cursor isn't null, we got an IndexedDB item. Add it to the note
-      // array and have the cursor continue!
-      allNotes.push(cursor.value);
-      cursor.continue();
-    } else {
-      // If we have a null cursor, it means we've gotten all the items in the
-      // store, so display the notes we got
-      callback(allNotes);
+      if (cursor != null) {
+        // If the cursor isn't null, we got an IndexedDB item. Add it to the
+        // note array and have the cursor continue!
+        allNotes.push(cursor.value);
+        cursor.continue();
+      } else {
+        // If we have a null cursor, it means we've gotten all the items in
+        // the store, so resolve with those notes!
+        resolve(allNotes);
+      }
     }
-  }
 
-  req.onerror = function(event) {
-    alert('error in cursor request ' + event.target.errorCode);
-  }
+    // If we get an error, reject with our error message
+    req.onerror = function(event) {
+      reject(`error in cursor request ${event.target.errorCode}`);
+    }
+  });
 }
 
 module.exports = {setupDB, addStickyNote, getNotes};
