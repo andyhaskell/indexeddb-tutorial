@@ -6,34 +6,26 @@
 require("fake-indexeddb/auto");
 let {setupDB, addStickyNote, getNotes} = require('./db');
 
-test('we can store and retrieve sticky notes', function(done) {
-  setupDB('FORWARD_TEST', function() {
-    addStickyNote('SLOTHS', function() {
-      addStickyNote('RULE!', function() {
-        // Now that our sticky notes are both added, we retrieve them from
-        // IndexedDB and check that we got them back in the right order.
-        getNotes(reverseOrder=false, function(notes) {
-          expect(notes).toHaveLength(2);
-          expect(notes[0].text).toBe('SLOTHS');
-          expect(notes[1].text).toBe('RULE!');
-          done();
-        });
-      });
-    });
-  });
+test('we can store and retrieve sticky notes!', function() {
+  return setupDB('FORWARD_TEST').
+    then(() => addStickyNote('SLOTHS')).
+    then(() => addStickyNote('RULE!')).
+    then(() => getNotes(reverseOrder=false)).
+    then((notes) => {
+      expect(notes).toHaveLength(2);
+      expect(notes[0].text).toBe('SLOTHS');
+      expect(notes[1].text).toBe('RULE!');
+    })
 });
 
-test('reverse order', function(done) {
-  setupDB('REVERSE_TEST', function() {
-    addStickyNote('REVERSE', function() {
-      addStickyNote('IN', function() {
-        getNotes(reverseOrder=true, function(notes) {
-          expect(notes).toHaveLength(2);
-          expect(notes[0].text).toBe('IN');
-          expect(notes[1].text).toBe('REVERSE');
-          done();
-        });
-      });
+test('reverse order', function() {
+  return setupDB('REVERSE_TEST').
+    then(() => addStickyNote('REVERSE')).
+    then(() => addStickyNote('IN')).
+    then(() => getNotes(reverseOrder=true)).
+    then((notes) => {
+      expect(notes).toHaveLength(2);
+      expect(notes[0].text).toBe('IN');
+      expect(notes[1].text).toBe('REVERSE');
     });
-  });
 });
