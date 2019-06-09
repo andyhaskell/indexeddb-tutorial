@@ -6,26 +6,24 @@
 require("fake-indexeddb/auto");
 let {setupDB, addStickyNote, getNotes} = require('./db');
 
-test('we can store and retrieve sticky notes!', function() {
-  return setupDB('FORWARD_TEST').
-    then(() => addStickyNote('SLOTHS')).
-    then(() => addStickyNote('RULE!')).
-    then(() => getNotes(reverseOrder=false)).
-    then((notes) => {
-      expect(notes).toHaveLength(2);
-      expect(notes[0].text).toBe('SLOTHS');
-      expect(notes[1].text).toBe('RULE!');
-    })
+test('we can store and retrieve sticky notes!', async function() {
+  await setupDB('FORWARD_TEST');
+  await addStickyNote('SLOTHS');
+  await addStickyNote('RULE!');
+
+  let notes = await getNotes(reverseOrder=false);
+  expect(notes).toHaveLength(2);
+  expect(notes[0].text).toBe('SLOTHS');
+  expect(notes[1].text).toBe('RULE!');
 });
 
-test('reverse order', function() {
-  return setupDB('REVERSE_TEST').
-    then(() => addStickyNote('REVERSE')).
-    then(() => addStickyNote('IN')).
-    then(() => getNotes(reverseOrder=true)).
-    then((notes) => {
-      expect(notes).toHaveLength(2);
-      expect(notes[0].text).toBe('IN');
-      expect(notes[1].text).toBe('REVERSE');
-    });
+test('reverse order', async function() {
+  await setupDB('REVERSE_TEST');
+  await addStickyNote('REVERSE');
+  await addStickyNote('IN');
+
+  let notes = await(getNotes(reverseOrder=true));
+  expect(notes).toHaveLength(2);
+  expect(notes[0].text).toBe('IN');
+  expect(notes[1].text).toBe('REVERSE');
 });
