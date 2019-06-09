@@ -57,22 +57,25 @@ function setupDB(namespace) {
 //
 
 // addStickyNote adds a sticky note for the message passed in in the notes
-// object store.
-function addStickyNote(message, callback) {
-  // Start a database transaction and get the notes object store
-  let tx = db.transaction(['notes'], 'readwrite');
-  let store = tx.objectStore('notes');
+// object store, returning a promise that resolves when adding the sticky note
+// is complete, or rejects if an IndexedDB error happens.
+function addStickyNote(message) {
+  return new Promise((resolve, reject) => {
+    // Start a database transaction and get the notes object store
+    let tx = db.transaction(['notes'], 'readwrite');
+    let store = tx.objectStore('notes');
 
-  // Put the sticky note into the object store
-  let note = {text: message, timestamp: Date.now()};
-  store.add(note);
+    // Put the sticky note into the object store
+    let note = {text: message, timestamp: Date.now()};
+    store.add(note);
 
-  // Wait for the database transaction to complete. If it is successful, run
-  // the callback function
-  tx.oncomplete = callback;
-  tx.onerror = function(event) {
-    alert('error storing note ' + event.target.errorCode);
-  }
+    // Wait for the database transaction to complete. If it is successful,
+    // resolve. Otherwise, reject with our error message.
+    tx.oncomplete = resolve;
+    tx.onerror = function(event) {
+      reject(`error storing note ${event.target.errorCode}`);
+    }
+  });
 }
 
 // getNotes retrieves all notes in the notes object store using an IndexedDB

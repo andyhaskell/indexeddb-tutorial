@@ -6,7 +6,7 @@ let {setupDB, addStickyNote, getNotes} = require('./db');
 // object store
 function submitNote() {
   let message = document.getElementById('newmessage');
-  addStickyNote(message.value, getAndDisplayNotes);
+  addStickyNote(message.value).then(getAndDisplayNotes);
   message.value = '';
 }
 
