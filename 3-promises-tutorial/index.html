@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head><title>IndexedDB note store</title></head>
+  <body>
+    <div id="app">
+      <div id="textbox">
+        <textarea id="newmessage"></textarea>
+        <button onclick="submitNote()">Add note</button>
+        <button onclick="flipNoteOrder()">Flip note order</button>
+      </div>
+      <div id="notes"></div>
+    </div>
+    <script src="main.js"></script>
+    <script type="text/javascript">
+      setupDB('').then(getAndDisplayNotes);
+    </script>
+  </body>
+</html>
