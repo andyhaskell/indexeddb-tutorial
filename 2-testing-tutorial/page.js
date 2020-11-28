@@ -1,6 +1,6 @@
 // page.js contains our code for working with the DOM in our web app.
 
-import _ from 'underscore';
+let _ = require('lodash');
 
 let {setupDB, addStickyNote, getNotes} = require('./db');
 
@@ -24,7 +24,7 @@ function displayNotes(notes) {
   for (let i = 0; i < notes.length; i++) {
     let note = notes[i];
     listHTML += '<li>';
-    listHTML += _.escape(`${note.text} + ' ' + ${new Date(note.timestamp).toString()}`);
+    listHTML += _.escape(`${note.text} ${new Date(note.timestamp).toString()}`);
     listHTML += '</li>';
   }
   document.getElementById('notes').innerHTML = listHTML;
