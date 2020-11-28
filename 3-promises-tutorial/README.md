@@ -8,7 +8,7 @@ The code is arranged as follows:
   * `setupDB`, which creates our IndexedDB database with a `notes` object store.
   * `addStickyNote`, which adds a sticky note with a message to our database.
   * `getNotes`, which retrieves sticky notes, either in forward or reverse order.
-* `page.js` contains all DOM manipulation, which is mostly the same as it was in Part 1.
+* `page.js` contains all DOM manipulation, which is mostly the same as it was in Parts 1 and 2.
 * `db.test.js` contains Jest unit test coverage for the database logic in `db.js`.
 
 To try out the web app with this code, run:
