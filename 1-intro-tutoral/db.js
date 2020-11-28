@@ -139,8 +139,9 @@ function displayNotes(notes) {
 
   for (let i = 0; i < notes.length; i++) {
     let note = notes[i];
-    listHTML += '<li>' + note.text + ' ' +
-      new Date(note.timestamp).toString() + '</li>';
+    listHTML += '<li>';
+    listHTML += _.escape(`${note.text} + ' ' + ${new Date(note.timestamp).toString()}`);
+    listHTML += '</li>';
   }
   document.getElementById('notes').innerHTML = listHTML;
 }

@@ -1,6 +1,12 @@
+let path = require('path');
+
 module.exports = {
-  entry: __dirname + "/page.js",
+  entry: path.join(__dirname, 'page.js'),
   output: {
     path: __dirname,
-  }
+  },
+  devServer: {
+    contentBase: __dirname,
+    port: 1123,
+  },
 }

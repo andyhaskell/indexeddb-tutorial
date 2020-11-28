@@ -1,0 +1,10 @@
+{
+  "license": "MIT",
+  "scripts": {
+    "serve": "http-server -p 1123"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "http-server": "^0.12.3"
+  }
+}
