@@ -1,4 +1,6 @@
-// page.js contains oud code for working with the DOM in our web app.
+// page.js contains our code for working with the DOM in our web app.
+
+import _ from 'underscore';
 
 let {setupDB, addStickyNote, getNotes} = require('./db');
 
@@ -21,8 +23,9 @@ function displayNotes(notes) {
 
   for (let i = 0; i < notes.length; i++) {
     let note = notes[i];
-    listHTML += '<li>' + note.text + ' ' +
-      new Date(note.timestamp).toString() + '</li>';
+    listHTML += '<li>';
+    listHTML += _.escape(`${note.text} + ' ' + ${new Date(note.timestamp).toString()}`);
+    listHTML += '</li>';
   }
   document.getElementById('notes').innerHTML = listHTML;
 }
